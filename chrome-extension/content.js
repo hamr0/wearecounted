@@ -1,19 +1,72 @@
 "use strict";
 
-var TRACKER_DOMAINS = [
-  "google-analytics.com", "googletagmanager.com", "doubleclick.net",
-  "facebook.net", "facebook.com", "fbcdn.net",
-  "hotjar.com", "clarity.ms", "fullstory.com",
-  "segment.io", "segment.com", "cdn.segment.com",
-  "mixpanel.com", "amplitude.com",
-  "newrelic.com", "nr-data.net",
-  "sentry.io", "bugsnag.com",
-  "quantserve.com", "scorecardresearch.com",
-  "outbrain.com", "taboola.com", "criteo.com",
-  "adsrvr.org", "adnxs.com", "rubiconproject.com",
-  "pubmatic.com", "openx.net", "casalemedia.com",
-  "bluekai.com", "demdex.net", "krxd.net",
-];
+// Domain → company name + purpose
+var COMPANY_MAP = {
+  // Google
+  "google-analytics.com": { name: "Google Analytics", purpose: "Analytics" },
+  "googletagmanager.com": { name: "Google Tag Manager", purpose: "Analytics" },
+  "doubleclick.net": { name: "Google Ads", purpose: "Advertising" },
+  "googlesyndication.com": { name: "Google Ads", purpose: "Advertising" },
+  "googleadservices.com": { name: "Google Ads", purpose: "Advertising" },
+  "google.com": { name: "Google", purpose: "Analytics" },
+
+  // Facebook / Meta
+  "facebook.net": { name: "Meta", purpose: "Advertising" },
+  "facebook.com": { name: "Meta", purpose: "Advertising" },
+  "fbcdn.net": { name: "Meta", purpose: "Advertising" },
+
+  // Analytics
+  "hotjar.com": { name: "Hotjar", purpose: "Analytics" },
+  "clarity.ms": { name: "Microsoft Clarity", purpose: "Analytics" },
+  "fullstory.com": { name: "FullStory", purpose: "Analytics" },
+  "segment.io": { name: "Segment", purpose: "Analytics" },
+  "segment.com": { name: "Segment", purpose: "Analytics" },
+  "mixpanel.com": { name: "Mixpanel", purpose: "Analytics" },
+  "amplitude.com": { name: "Amplitude", purpose: "Analytics" },
+  "newrelic.com": { name: "New Relic", purpose: "Analytics" },
+  "nr-data.net": { name: "New Relic", purpose: "Analytics" },
+  "optimizely.com": { name: "Optimizely", purpose: "Analytics" },
+  "bounceexchange.com": { name: "Bounce Exchange", purpose: "Analytics" },
+  "permutive.com": { name: "Permutive", purpose: "Analytics" },
+  "chartbeat.com": { name: "Chartbeat", purpose: "Analytics" },
+  "scorecardresearch.com": { name: "Comscore", purpose: "Analytics" },
+  "quantserve.com": { name: "Quantcast", purpose: "Analytics" },
+
+  // Error tracking
+  "sentry.io": { name: "Sentry", purpose: "Error tracking" },
+  "bugsnag.com": { name: "Bugsnag", purpose: "Error tracking" },
+
+  // Advertising
+  "outbrain.com": { name: "Outbrain", purpose: "Advertising" },
+  "taboola.com": { name: "Taboola", purpose: "Advertising" },
+  "criteo.com": { name: "Criteo", purpose: "Advertising" },
+  "adsrvr.org": { name: "The Trade Desk", purpose: "Advertising" },
+  "adnxs.com": { name: "Microsoft Advertising", purpose: "Advertising" },
+  "rubiconproject.com": { name: "Magnite (Rubicon)", purpose: "Advertising" },
+  "pubmatic.com": { name: "PubMatic", purpose: "Advertising" },
+  "openx.net": { name: "OpenX", purpose: "Advertising" },
+  "casalemedia.com": { name: "Index Exchange", purpose: "Advertising" },
+  "indexww.com": { name: "Index Exchange", purpose: "Advertising" },
+  "amazon-adsystem.com": { name: "Amazon Ads", purpose: "Advertising" },
+  "advertising.com": { name: "Yahoo Advertising", purpose: "Advertising" },
+  "bidswitch.net": { name: "BidSwitch", purpose: "Advertising" },
+  "sharethrough.com": { name: "Sharethrough", purpose: "Advertising" },
+  "33across.com": { name: "33Across", purpose: "Advertising" },
+  "lijit.com": { name: "Sovrn", purpose: "Advertising" },
+  "sovrn.com": { name: "Sovrn", purpose: "Advertising" },
+  "media.net": { name: "Media.net", purpose: "Advertising" },
+  "btloader.com": { name: "BidTellect", purpose: "Advertising" },
+  "safeframe.googlesyndication.com": { name: "Google Ads", purpose: "Advertising" },
+
+  // Data brokers
+  "bluekai.com": { name: "Oracle (BlueKai)", purpose: "Data broker" },
+  "demdex.net": { name: "Adobe Audience Manager", purpose: "Data broker" },
+  "krxd.net": { name: "Salesforce (Krux)", purpose: "Data broker" },
+  "rlcdn.com": { name: "LiveRamp", purpose: "Data broker" },
+  "pippio.com": { name: "LiveRamp", purpose: "Data broker" },
+  "exelator.com": { name: "Nielsen", purpose: "Data broker" },
+  "agkn.com": { name: "Neustar", purpose: "Data broker" },
+};
 
 var PIXEL_PATH_PATTERNS = /\/pixel|\/track|\/beacon|\/collect|\/t\.gif|\/p\.gif|\/\.gif|__utm\.gif/i;
 var MAX_ELEMENTS = 500;
@@ -29,13 +82,18 @@ function getDomain(urlStr) {
   }
 }
 
-function isTrackerDomain(domain) {
-  for (var i = 0; i < TRACKER_DOMAINS.length; i++) {
-    if (domain === TRACKER_DOMAINS[i] || domain.endsWith("." + TRACKER_DOMAINS[i])) {
-      return true;
-    }
+function lookupCompany(domain) {
+  // Try exact match, then walk up subdomains
+  var parts = domain.split(".");
+  for (var i = 0; i < parts.length - 1; i++) {
+    var candidate = parts.slice(i).join(".");
+    if (COMPANY_MAP[candidate]) return COMPANY_MAP[candidate];
   }
-  return false;
+  return null;
+}
+
+function isKnownTracker(domain) {
+  return lookupCompany(domain) !== null;
 }
 
 function isHidden(el) {
@@ -48,12 +106,18 @@ function addItem(type, url) {
   var domain = getDomain(url);
   if (!domain) return;
 
-  // Deduplicate by type + url
   for (var i = 0; i < items.length; i++) {
     if (items[i].type === type && items[i].src === url) return;
   }
 
-  items.push({ type: type, src: url, domain: domain });
+  var company = lookupCompany(domain);
+  items.push({
+    type: type,
+    src: url,
+    domain: domain,
+    company: company ? company.name : domain,
+    purpose: company ? company.purpose : "Unknown",
+  });
   totals[type + "s"] = (totals[type + "s"] || 0) + 1;
   totals.total++;
 }
@@ -71,7 +135,7 @@ function scanPixels() {
                   img.getAttribute("height") === "0" || img.getAttribute("height") === "1";
     var hidden = isHidden(img);
     var pixelPath = PIXEL_PATH_PATTERNS.test(src);
-    var tracker = isTrackerDomain(getDomain(src));
+    var tracker = isKnownTracker(getDomain(src));
 
     if (isSmall || hidden || (pixelPath && tracker)) {
       addItem("pixel", src);
@@ -106,7 +170,7 @@ function scanPrefetches() {
     var href = links[i].href;
     if (!href) continue;
     var domain = getDomain(href);
-    if (isTrackerDomain(domain)) {
+    if (isKnownTracker(domain)) {
       addItem("prefetch", href);
     }
   }
@@ -120,7 +184,7 @@ function scanElement(el) {
                   (el.width <= 1 && el.height <= 1);
     var hidden = isHidden(el);
     var pixelPath = PIXEL_PATH_PATTERNS.test(src);
-    var tracker = isTrackerDomain(getDomain(src));
+    var tracker = isKnownTracker(getDomain(src));
     if (isSmall || hidden || (pixelPath && tracker)) {
       addItem("pixel", src);
       sendResults();
@@ -140,7 +204,7 @@ function scanElement(el) {
     var rel = (el.getAttribute("rel") || "").toLowerCase();
     if (rel === "prefetch" || rel === "preconnect" || rel === "dns-prefetch") {
       var href = el.href;
-      if (href && isTrackerDomain(getDomain(href))) {
+      if (href && isKnownTracker(getDomain(href))) {
         addItem("prefetch", href);
         sendResults();
       }
@@ -159,7 +223,6 @@ function sendResults() {
   });
 }
 
-// Inject beacon wrapper into page context
 function injectBeaconWrapper() {
   var script = document.createElement("script");
   script.src = chrome.runtime.getURL("inject.js");
@@ -167,7 +230,6 @@ function injectBeaconWrapper() {
   script.onload = function () { script.remove(); };
 }
 
-// Listen for beacon events from injected script
 window.addEventListener("message", function (event) {
   if (event.source !== window) return;
   if (!event.data || event.data.type !== "__wearecounted_beacon__") return;
@@ -176,14 +238,12 @@ window.addEventListener("message", function (event) {
   sendResults();
 });
 
-// Run
 injectBeaconWrapper();
 scanPixels();
 scanIframes();
 scanPrefetches();
 sendResults();
 
-// Watch for dynamically injected elements
 var observer = new MutationObserver(function (mutations) {
   for (var i = 0; i < mutations.length; i++) {
     var nodes = mutations[i].addedNodes;
@@ -191,7 +251,6 @@ var observer = new MutationObserver(function (mutations) {
       var node = nodes[j];
       if (node.nodeType !== 1) continue;
       scanElement(node);
-      // Also check children
       var children = node.querySelectorAll ? node.querySelectorAll("img, iframe, link") : [];
       for (var k = 0; k < children.length; k++) {
         scanElement(children[k]);
