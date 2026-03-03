@@ -48,6 +48,13 @@ var COMPANY_MAP = {
   "casalemedia.com": { name: "Index Exchange", purpose: "Advertising" },
   "indexww.com": { name: "Index Exchange", purpose: "Advertising" },
   "amazon-adsystem.com": { name: "Amazon Ads", purpose: "Advertising" },
+  "amazonaax.com": { name: "Amazon Ads", purpose: "Advertising" },
+  "assoc-amazon.com": { name: "Amazon Ads", purpose: "Advertising" },
+  "amazon.com": { name: "Amazon", purpose: "Analytics" },
+  "ssl-images-amazon.com": { name: "Amazon", purpose: "Content" },
+  "media-amazon.com": { name: "Amazon", purpose: "Content" },
+  "cloudfront.net": { name: "Amazon CloudFront", purpose: "CDN" },
+  "amazonaws.com": { name: "Amazon AWS", purpose: "Infrastructure" },
   "advertising.com": { name: "Yahoo Advertising", purpose: "Advertising" },
   "bidswitch.net": { name: "BidSwitch", purpose: "Advertising" },
   "sharethrough.com": { name: "Sharethrough", purpose: "Advertising" },
@@ -213,14 +220,19 @@ function scanElement(el) {
 }
 
 function sendResults() {
-  browser.runtime.sendMessage({
-    type: "scanResult",
-    domain: location.hostname,
-    url: location.href,
-    timestamp: Date.now(),
-    items: items,
-    totals: totals,
-  });
+  try {
+    browser.runtime.sendMessage({
+      type: "scanResult",
+      domain: location.hostname,
+      url: location.href,
+      timestamp: Date.now(),
+      items: items,
+      totals: totals,
+    });
+  } catch (e) {
+    observer.disconnect();
+    window.removeEventListener("message", onBeaconMessage);
+  }
 }
 
 function injectBeaconWrapper() {
@@ -230,19 +242,15 @@ function injectBeaconWrapper() {
   script.onload = function () { script.remove(); };
 }
 
-window.addEventListener("message", function (event) {
+function onBeaconMessage(event) {
   if (event.source !== window) return;
   if (!event.data || event.data.type !== "__wearecounted_beacon__") return;
 
   addItem("beacon", event.data.url);
   sendResults();
-});
+}
 
-injectBeaconWrapper();
-scanPixels();
-scanIframes();
-scanPrefetches();
-sendResults();
+window.addEventListener("message", onBeaconMessage);
 
 var observer = new MutationObserver(function (mutations) {
   for (var i = 0; i < mutations.length; i++) {
@@ -260,3 +268,9 @@ var observer = new MutationObserver(function (mutations) {
 });
 
 observer.observe(document.documentElement, { childList: true, subtree: true });
+
+injectBeaconWrapper();
+scanPixels();
+scanIframes();
+scanPrefetches();
+sendResults();
