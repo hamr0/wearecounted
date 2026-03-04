@@ -9,11 +9,44 @@ var COMPANY_MAP = {
   "googlesyndication.com": { name: "Google Ads", purpose: "Advertising" },
   "googleadservices.com": { name: "Google Ads", purpose: "Advertising" },
   "google.com": { name: "Google", purpose: "Analytics" },
+  "youtube.com": { name: "YouTube (Google)", purpose: "Advertising" },
+  "ytimg.com": { name: "YouTube (Google)", purpose: "Advertising" },
+  "googlevideo.com": { name: "YouTube (Google)", purpose: "Advertising" },
+  "gstatic.com": { name: "Google", purpose: "Infrastructure" },
+  "googleapis.com": { name: "Google", purpose: "Infrastructure" },
+  "ggpht.com": { name: "Google", purpose: "Infrastructure" },
 
   // Facebook / Meta
   "facebook.net": { name: "Meta", purpose: "Advertising" },
   "facebook.com": { name: "Meta", purpose: "Advertising" },
   "fbcdn.net": { name: "Meta", purpose: "Advertising" },
+
+  // LinkedIn
+  "linkedin.com": { name: "LinkedIn", purpose: "Advertising" },
+  "licdn.com": { name: "LinkedIn", purpose: "Advertising" },
+
+  // Microsoft / Bing
+  "bing.com": { name: "Microsoft Ads", purpose: "Advertising" },
+  "msn.com": { name: "Microsoft", purpose: "Advertising" },
+  "live.com": { name: "Microsoft", purpose: "Analytics" },
+
+  // Twitter / X
+  "twitter.com": { name: "X (Twitter)", purpose: "Advertising" },
+  "t.co": { name: "X (Twitter)", purpose: "Advertising" },
+  "twimg.com": { name: "X (Twitter)", purpose: "Advertising" },
+
+  // TikTok
+  "tiktok.com": { name: "TikTok", purpose: "Advertising" },
+  "byteoversea.com": { name: "TikTok", purpose: "Advertising" },
+  "tiktokcdn.com": { name: "TikTok", purpose: "CDN" },
+
+  // Pinterest
+  "pinterest.com": { name: "Pinterest", purpose: "Advertising" },
+  "pinimg.com": { name: "Pinterest", purpose: "Advertising" },
+
+  // Snap
+  "snapchat.com": { name: "Snapchat", purpose: "Advertising" },
+  "sc-static.net": { name: "Snapchat", purpose: "Advertising" },
 
   // Analytics
   "hotjar.com": { name: "Hotjar", purpose: "Analytics" },
@@ -31,6 +64,18 @@ var COMPANY_MAP = {
   "chartbeat.com": { name: "Chartbeat", purpose: "Analytics" },
   "scorecardresearch.com": { name: "Comscore", purpose: "Analytics" },
   "quantserve.com": { name: "Quantcast", purpose: "Analytics" },
+  "heap.io": { name: "Heap", purpose: "Analytics" },
+  "heapanalytics.com": { name: "Heap", purpose: "Analytics" },
+  "mouseflow.com": { name: "Mouseflow", purpose: "Analytics" },
+  "crazyegg.com": { name: "Crazy Egg", purpose: "Analytics" },
+  "contentsquare.com": { name: "Contentsquare", purpose: "Analytics" },
+  "matomo.org": { name: "Matomo", purpose: "Analytics" },
+  "plausible.io": { name: "Plausible", purpose: "Analytics" },
+  "posthog.com": { name: "PostHog", purpose: "Analytics" },
+  "pendo.io": { name: "Pendo", purpose: "Analytics" },
+  "walkme.com": { name: "WalkMe", purpose: "Analytics" },
+  "userpilot.com": { name: "Userpilot", purpose: "Analytics" },
+  "appcues.com": { name: "Appcues", purpose: "Analytics" },
 
   // Error tracking
   "sentry.io": { name: "Sentry", purpose: "Error tracking" },
@@ -64,8 +109,29 @@ var COMPANY_MAP = {
   "media.net": { name: "Media.net", purpose: "Advertising" },
   "btloader.com": { name: "BidTellect", purpose: "Advertising" },
   "safeframe.googlesyndication.com": { name: "Google Ads", purpose: "Advertising" },
+  "moatads.com": { name: "Moat (Oracle)", purpose: "Advertising" },
+  "doubleverify.com": { name: "DoubleVerify", purpose: "Advertising" },
+  "adsymptotic.com": { name: "Adsymptotic", purpose: "Advertising" },
+  "liadm.com": { name: "LiveIntent", purpose: "Advertising" },
+  "intentiq.com": { name: "IntentIQ", purpose: "Advertising" },
+  "id5-sync.com": { name: "ID5", purpose: "Advertising" },
+  "yieldmo.com": { name: "Yieldmo", purpose: "Advertising" },
+  "triplelift.com": { name: "TripleLift", purpose: "Advertising" },
+  "smartadserver.com": { name: "Smart AdServer", purpose: "Advertising" },
+  "teads.tv": { name: "Teads", purpose: "Advertising" },
+  "zemanta.com": { name: "Zemanta", purpose: "Advertising" },
+  "revcontent.com": { name: "RevContent", purpose: "Advertising" },
+  "nativo.com": { name: "Nativo", purpose: "Advertising" },
+  "stackadapt.com": { name: "StackAdapt", purpose: "Advertising" },
+  "adroll.com": { name: "AdRoll", purpose: "Advertising" },
+  "retargetly.com": { name: "Retargetly", purpose: "Advertising" },
 
-  // Data brokers
+  // Adobe
+  "omtrdc.net": { name: "Adobe Analytics", purpose: "Analytics" },
+  "2o7.net": { name: "Adobe Analytics", purpose: "Analytics" },
+  "adobedtm.com": { name: "Adobe Tag Manager", purpose: "Analytics" },
+
+  // Data brokers / Identity
   "bluekai.com": { name: "Oracle (BlueKai)", purpose: "Data broker" },
   "demdex.net": { name: "Adobe Audience Manager", purpose: "Data broker" },
   "krxd.net": { name: "Salesforce (Krux)", purpose: "Data broker" },
@@ -73,7 +139,59 @@ var COMPANY_MAP = {
   "pippio.com": { name: "LiveRamp", purpose: "Data broker" },
   "exelator.com": { name: "Nielsen", purpose: "Data broker" },
   "agkn.com": { name: "Neustar", purpose: "Data broker" },
+  "tapad.com": { name: "Tapad", purpose: "Data broker" },
+  "liveramp.com": { name: "LiveRamp", purpose: "Data broker" },
+  "zeotap.com": { name: "Zeotap", purpose: "Data broker" },
+  "lotame.com": { name: "Lotame", purpose: "Data broker" },
+  "bombora.com": { name: "Bombora", purpose: "Data broker" },
+  "6sense.com": { name: "6sense", purpose: "Data broker" },
+  "clearbit.com": { name: "Clearbit", purpose: "Data broker" },
+  "zoominfo.com": { name: "ZoomInfo", purpose: "Data broker" },
+
+  // Consent / Privacy
+  "onetrust.com": { name: "OneTrust", purpose: "Consent" },
+  "cookielaw.org": { name: "OneTrust", purpose: "Consent" },
+  "trustarc.com": { name: "TrustArc", purpose: "Consent" },
+  "evidon.com": { name: "Evidon", purpose: "Consent" },
+  "consensu.org": { name: "IAB Consent", purpose: "Consent" },
+
+  // CDN / Infra used for tracking
+  "akamaihd.net": { name: "Akamai", purpose: "CDN" },
+  "fastly.net": { name: "Fastly", purpose: "CDN" },
+  "edgecastcdn.net": { name: "Edgecast", purpose: "CDN" },
+
+  // Customer engagement
+  "hubspot.com": { name: "HubSpot", purpose: "Marketing" },
+  "hsforms.com": { name: "HubSpot", purpose: "Marketing" },
+  "marketo.com": { name: "Marketo", purpose: "Marketing" },
+  "mktoresp.com": { name: "Marketo", purpose: "Marketing" },
+  "pardot.com": { name: "Pardot", purpose: "Marketing" },
+  "salesforce.com": { name: "Salesforce", purpose: "Marketing" },
+  "intercom.io": { name: "Intercom", purpose: "Marketing" },
+  "drift.com": { name: "Drift", purpose: "Marketing" },
+  "zendesk.com": { name: "Zendesk", purpose: "Customer support" },
 };
+
+// URL path/query patterns for fallback classification when domain isn't in COMPANY_MAP
+var URL_PATTERN_MAP = [
+  // Analytics scripts
+  { pattern: /analytics\.js|gtag\/js|gtm\.js/i, name: "Google Analytics", purpose: "Analytics" },
+  { pattern: /fbevents\.js|fbq/i, name: "Meta Pixel", purpose: "Advertising" },
+  { pattern: /bat\.js|\/UET\//i, name: "Microsoft Ads", purpose: "Advertising" },
+  { pattern: /insight\.min\.js|snap\.licdn\.com/i, name: "LinkedIn Insight", purpose: "Advertising" },
+  // Generic tracking patterns
+  { pattern: /\/pixel[./?]|\/track[./?]|\/beacon[./?]/i, name: "Tracking Pixel", purpose: "Analytics" },
+  { pattern: /\/collect[./?]|__utm/i, name: "Analytics Beacon", purpose: "Analytics" },
+  { pattern: /\/ads\/|\/adserver|\/pagead\//i, name: "Ad Server", purpose: "Advertising" },
+  { pattern: /\/conversion[./?]|\/rtb[./?]|\/bid[./?]/i, name: "Ad Exchange", purpose: "Advertising" },
+];
+
+function matchUrlPattern(url) {
+  for (var i = 0; i < URL_PATTERN_MAP.length; i++) {
+    if (URL_PATTERN_MAP[i].pattern.test(url)) return URL_PATTERN_MAP[i];
+  }
+  return null;
+}
 
 var PIXEL_PATH_PATTERNS = /\/pixel|\/track|\/beacon|\/collect|\/t\.gif|\/p\.gif|\/\.gif|__utm\.gif/i;
 var MAX_ELEMENTS = 500;
@@ -117,7 +235,7 @@ function addItem(type, url) {
     if (items[i].type === type && items[i].src === url) return;
   }
 
-  var company = lookupCompany(domain);
+  var company = lookupCompany(domain) || matchUrlPattern(url);
   items.push({
     type: type,
     src: url,
@@ -230,6 +348,7 @@ function sendResults() {
       totals: totals,
     });
   } catch (e) {
+    // Extension was reloaded/updated — stop all activity
     observer.disconnect();
     window.removeEventListener("message", onBeaconMessage);
   }
